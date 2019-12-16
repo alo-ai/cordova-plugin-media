@@ -362,22 +362,24 @@ BOOL keepAvAudioSessionAlwaysActive = NO;
 
             // audioFile.player != nil  or player was successfully created
             // get the audioSession and set the category to allow Playing when device is locked or ring/silent switch engaged
-            if ([self hasAudioSession]) {
-                NSError* __autoreleasing err = nil;
-                NSNumber* playAudioWhenScreenIsLocked = [options objectForKey:@"playAudioWhenScreenIsLocked"];
-                BOOL bPlayAudioWhenScreenIsLocked = YES;
-                if (playAudioWhenScreenIsLocked != nil) {
-                    bPlayAudioWhenScreenIsLocked = [playAudioWhenScreenIsLocked boolValue];
-                }
+            //
+            // NOTE: REMOVED TO STOP INTERRUPTION OF OTHER AUDIO SOURCES
+            // if ([self hasAudioSession]) {
+            //     NSError* __autoreleasing err = nil;
+            //     NSNumber* playAudioWhenScreenIsLocked = [options objectForKey:@"playAudioWhenScreenIsLocked"];
+            //     BOOL bPlayAudioWhenScreenIsLocked = YES;
+            //     if (playAudioWhenScreenIsLocked != nil) {
+            //         bPlayAudioWhenScreenIsLocked = [playAudioWhenScreenIsLocked boolValue];
+            //     }
 
-                NSString* sessionCategory = bPlayAudioWhenScreenIsLocked ? AVAudioSessionCategoryPlayback : AVAudioSessionCategorySoloAmbient;
-                [self.avSession setCategory:sessionCategory error:&err];
-                if (![self.avSession setActive:YES error:&err]) {
-                    // other audio with higher priority that does not allow mixing could cause this to fail
-                    NSLog(@"Unable to play audio: %@", [err localizedFailureReason]);
-                    bError = YES;
-                }
-            }
+            //     NSString* sessionCategory = bPlayAudioWhenScreenIsLocked ? AVAudioSessionCategoryPlayback : AVAudioSessionCategorySoloAmbient;
+            //     [self.avSession setCategory:sessionCategory error:&err];
+            //     if (![self.avSession setActive:YES error:&err]) {
+            //         // other audio with higher priority that does not allow mixing could cause this to fail
+            //         NSLog(@"Unable to play audio: %@", [err localizedFailureReason]);
+            //         bError = YES;
+            //     }
+            // }
             if (!bError) {
                 NSLog(@"Playing audio sample '%@'", audioFile.resourcePath);
                 double duration = 0;
@@ -406,10 +408,11 @@ BOOL keepAvAudioSessionAlwaysActive = NO;
                         numberOfLoops = [loopOption intValue] - 1;
                     }
                     audioFile.player.numberOfLoops = numberOfLoops;
-                    if (audioFile.player.isPlaying) {
-                        [audioFile.player stop];
-                        audioFile.player.currentTime = 0;
-                    }
+                    // NOTE: REMOVED TO STOP INTERRUPTION OF OTHER AUDIO SOURCES
+                    // if (audioFile.player.isPlaying) {
+                    //     [audioFile.player stop]; 
+                    //     audioFile.player.currentTime = 0;
+                    // } 
                     if (audioFile.volume != nil) {
                         audioFile.player.volume = [audioFile.volume floatValue];
                     }
