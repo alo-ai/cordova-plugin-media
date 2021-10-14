@@ -351,6 +351,8 @@ BOOL keepAvAudioSessionAlwaysActive = NO;
 
     BOOL bError = NO;
 
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+
     CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId:mediaId doValidation:YES forRecording:NO];
     if ((audioFile != nil) && (audioFile.resourceURL != nil)) {
         if (audioFile.player == nil) {
