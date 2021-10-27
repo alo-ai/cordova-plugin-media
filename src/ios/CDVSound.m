@@ -351,7 +351,13 @@ BOOL keepAvAudioSessionAlwaysActive = NO;
 
     BOOL bError = NO;
 
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+    NSNumber* mixWithOthers = [options objectForKey:@"mixWithOthers"];
+    if (mixWithOthers != nil) {
+        BOOL bMixWithOthers = [mixWithOthers boolValue];
+        if(bMixWithOthers) {
+            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+        }
+    }
 
     CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId:mediaId doValidation:YES forRecording:NO];
     if ((audioFile != nil) && (audioFile.resourceURL != nil)) {
