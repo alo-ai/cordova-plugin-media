@@ -28,6 +28,7 @@
 @implementation CDVSound
 
 BOOL keepAvAudioSessionAlwaysActive = NO;
+BOOL MixWithOthers = NO;
 
 @synthesize soundCache, avSession, currMediaId, statusCallbackId;
 
@@ -238,6 +239,19 @@ BOOL keepAvAudioSessionAlwaysActive = NO;
   return [self createMediaErrorWithCode:MEDIA_ERR_ABORTED message:message];
 }
 
+- (void)setOptions:(CDVInvokedUrlCommand*)command
+{
+    NSString* callbackId = command.callbackId;
+#pragma unused(callbackId)
+
+    NSDictionary* options = [command argumentAtIndex:0 withDefault:nil];
+
+    NSNumber* mixWithOthers = [options objectForKey:@"mixWithOthers"];
+    if (mixWithOthers != nil) {
+        MixWithOthers = [mixWithOthers boolValue];
+    }
+}
+
 - (void)create:(CDVInvokedUrlCommand*)command
 {
     NSString* mediaId = [command argumentAtIndex:0];
@@ -349,16 +363,16 @@ BOOL keepAvAudioSessionAlwaysActive = NO;
     NSString* resourcePath = [command argumentAtIndex:1];
     NSDictionary* options = [command argumentAtIndex:2 withDefault:nil];
 
-    BOOL bError = NO;
-
+    BOOL bMixWithOthers = MixWithOthers;
     NSNumber* mixWithOthers = [options objectForKey:@"mixWithOthers"];
     if (mixWithOthers != nil) {
         BOOL bMixWithOthers = [mixWithOthers boolValue];
-        if(bMixWithOthers) {
-            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
-        }
+    }
+    if(bMixWithOthers) {
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
     }
 
+    BOOL bError = NO;
     CDVAudioFile* audioFile = [self audioFileForResource:resourcePath withId:mediaId doValidation:YES forRecording:NO];
     if ((audioFile != nil) && (audioFile.resourceURL != nil)) {
         if (audioFile.player == nil) {

@@ -77,6 +77,10 @@ Media.get = function(id) {
     return mediaObjects[id];
 };
 
+Media.SetOptions = function(options) {
+    exec(null, null, "Media", "setOptions", [options]);
+}
+
 /**
  * Start or resume playing audio file.
  */
